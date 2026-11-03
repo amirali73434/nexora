@@ -391,6 +391,22 @@
             }
         });
 
+        document.querySelectorAll("[data-link]").forEach(function (link) {
+            var value = site[link.getAttribute("data-link")];
+
+            if (isConfigured(value) && /^https?:\/\//i.test(String(value).trim())) {
+                link.href = String(value).trim();
+                link.classList.remove("is-disabled");
+            } else {
+                link.href = "#";
+                link.classList.add("is-disabled");
+
+                link.addEventListener("click", function (event) {
+                    event.preventDefault();
+                });
+            }
+        });
+
         document.querySelectorAll("[data-mail]").forEach(function (link) {
             if (isConfigured(site.email)) {
                 link.href = "mailto:" + String(site.email).trim();

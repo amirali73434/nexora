@@ -5,7 +5,9 @@
 
 window.SITE = {
     instagram: "YOUR_ID",
-    telegram: "YOUR_ID",
+    telegram: "https://t.me/NEXORA_Digital_Official",
+    telegramBot: "https://t.me/NEXORA_AI_Employee_bot",
+    youtube: "",
     whatsapp: "",
     bale: "",
     eitaa: "",
