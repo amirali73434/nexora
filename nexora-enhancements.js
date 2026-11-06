@@ -391,7 +391,6 @@
 
     function setupOrderForm() {
         var form = byId("orderForm");
-
         if (!form) return;
 
         var service = byId("orderService");
@@ -401,16 +400,13 @@
         var status = byId("orderStatus");
 
         function createMessage() {
-            var message = [
+            preview.value = [
                 "سلام، برای ثبت سفارش در NEXORA پیام می‌دهم.",
                 "",
                 "خدمت: " + service.value,
                 "نام: " + (name.value.trim() || "ثبت نشده"),
                 "توضیحات: " + description.value.trim()
-            ];
-
-            preview.value = message.join("\n");
-
+            ].join("\n");
             return preview.value;
         }
 
@@ -421,42 +417,9 @@
 
         form.addEventListener("submit", function (event) {
             event.preventDefault();
-
             if (!form.reportValidity()) return;
-
-            var message = createMessage();
-            var site = window.SITE || {};
-
-            if (isConfigured(site.whatsapp)) {
-                var phone = String(site.whatsapp)
-                    .replace(/[^\d]/g, "")
-                    .replace(/^00/, "");
-
-                if (/^0\d{10}$/.test(phone)) {
-                    phone = "98" + phone.slice(1);
-                }
-
-                if (phone.length >= 8) {
-                    window.open(
-                        "https://wa.me/" + phone +
-                        "?text=" + encodeURIComponent(message),
-                        "_blank",
-                        "noopener"
-                    );
-
-                    status.textContent =
-                        "پیام سفارش در واتساپ آماده شد.";
-                    return;
-                }
-            }
-
-            status.textContent =
-                    "برنامه ایمیل برای ارسال سفارش باز می‌شود.";
-                return;
-            }
-
-            status.textContent =
-                "اطلاعات تماس هنوز تنظیم نشده است. متن سفارش در کادر بالا آماده است؛ اطلاعات تماس را در data.js وارد کن.";
+            createMessage();
+            status.textContent = "متن سفارش آماده است؛ برای ثبت نهایی از کانال تلگرام NEXORA استفاده کن.";
         });
     }
 
