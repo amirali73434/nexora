@@ -1422,3 +1422,8 @@ main {
 @media (prefers-reduced-motion: reduce) {
     .nx-reveal { opacity: 1; transform: none; filter: none; transition: none; }
 }
+
+/* Scroll reveal visibility fix */
+.nx-reveal{opacity:0;transform:translateY(26px);filter:blur(3px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1),filter .8s ease}
+.nx-reveal.nx-visible{opacity:1!important;transform:translateY(0)!important;filter:blur(0)!important}
+@media(prefers-reduced-motion:reduce){.nx-reveal{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}}
