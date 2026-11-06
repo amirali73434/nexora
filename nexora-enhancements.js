@@ -479,7 +479,9 @@
 
         container.append(media, heading, type, desc);
 
-        setupReviewSection(container, item);\n\n        if (item.key !== "nexora") {
+        setupReviewSection(container, item);
+
+        if (item.key !== "nexora") {
             var notice = document.createElement("p");
             notice.className = "notice";
             notice.textContent =
@@ -565,7 +567,7 @@
                 "خدمت: " + service.value,
                 "نام: " + (name.value.trim() || "ثبت نشده"),
                 "توضیحات: " + description.value.trim()
-            ].join("\\n");
+            ].join("\n");
             return preview.value;
         }
 
@@ -579,7 +581,7 @@
             if (!form.reportValidity()) return;
 
             var message = createMessage();
-            if (!isConfigured(botUrl) || !/^https:\\/\\/t\\.me\\//i.test(String(botUrl))) {
+            if (!isConfigured(botUrl) || String(botUrl).trim().indexOf("https://t.me/") !== 0) {
                 status.textContent = "لینک بات تلگرام تنظیم نشده است. لطفاً بعداً دوباره تلاش کن.";
                 return;
             }
