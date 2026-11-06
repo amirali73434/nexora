@@ -261,6 +261,164 @@
         });
     }
 
+    function setupReviewSection(container, item) {
+        var section = document.createElement("section");
+        section.className = "nx-reviews";
+
+        var heading = document.createElement("div");
+        heading.className = "nx-reviews-heading";
+
+        var title = document.createElement("h2");
+        title.textContent = "امتیاز و دیدگاه‌ها";
+
+        var demoLabel = document.createElement("span");
+        demoLabel.className = "nx-demo-label";
+        demoLabel.textContent = "نسخه نمایشی";
+
+        var intro = document.createElement("p");
+        intro.className = "nx-reviews-note";
+        intro.textContent = "این بخش فعلاً نمایشی است؛ دیدگاه‌های ثبت‌شده فقط در همین صفحه و تا زمان بارگذاری مجدد دیده می‌شوند.";
+
+        var summary = document.createElement("div");
+        summary.className = "nx-review-summary";
+
+        var score = document.createElement("strong");
+        score.className = "nx-review-score";
+        score.textContent = "۴٫۸";
+
+        var summaryStars = document.createElement("span");
+        summaryStars.className = "nx-review-stars";
+        summaryStars.textContent = "★★★★★";
+
+        var summaryCount = document.createElement("small");
+        summaryCount.textContent = "۲ دیدگاه نمایشی";
+
+        summary.append(score, summaryStars, summaryCount);
+        heading.append(title, demoLabel);
+        section.append(heading, intro, summary);
+
+        var list = document.createElement("div");
+        list.className = "nx-review-list";
+
+        var reviews = [
+            { name: "کاربر نمونه", rating: 5, text: "طراحی تمیز و جذابی دارد. این یک دیدگاه نمونه برای نمایش ظاهر بخش است." },
+            { name: "بازدیدکننده آزمایشی", rating: 4, text: "ترکیب‌بندی و توجه به جزئیات خوب است. این نظر واقعی مشتری نیست." }
+        ];
+
+        function renderReviews() {
+            list.replaceChildren();
+            reviews.forEach(function (review) {
+                var card = document.createElement("article");
+                card.className = "nx-review-card";
+
+                var top = document.createElement("div");
+                top.className = "nx-review-card-top";
+
+                var author = document.createElement("strong");
+                author.textContent = review.name;
+
+                var stars = document.createElement("span");
+                stars.className = "nx-review-stars";
+                stars.textContent = "★".repeat(review.rating) + "☆".repeat(5 - review.rating);
+
+                var text = document.createElement("p");
+                text.textContent = review.text;
+
+                top.append(author, stars);
+                card.append(top, text);
+                list.appendChild(card);
+            });
+            summaryCount.textContent = reviews.length + " دیدگاه نمایشی";
+        }
+
+        var form = document.createElement("form");
+        form.className = "nx-review-form";
+
+        var formTitle = document.createElement("h3");
+        formTitle.textContent = "نظر آزمایشی خودت را بنویس";
+
+        var nameLabel = document.createElement("label");
+        nameLabel.textContent = "نام نمایشی";
+
+        var nameInput = document.createElement("input");
+        nameInput.type = "text";
+        nameInput.maxLength = 30;
+        nameInput.placeholder = "مثلاً: بازدیدکننده";
+        nameInput.required = true;
+
+        var ratingLabel = document.createElement("label");
+        ratingLabel.textContent = "امتیاز شما";
+
+        var ratingPicker = document.createElement("div");
+        ratingPicker.className = "nx-rating-picker";
+        ratingPicker.setAttribute("role", "group");
+        ratingPicker.setAttribute("aria-label", "انتخاب امتیاز از یک تا پنج");
+
+        var selectedRating = 5;
+        for (var n = 1; n <= 5; n++) {
+            (function (value) {
+                var starButton = document.createElement("button");
+                starButton.type = "button";
+                starButton.className = "nx-rating-star";
+                starButton.textContent = "★";
+                starButton.setAttribute("aria-label", value + " از ۵");
+                starButton.setAttribute("aria-pressed", value === selectedRating ? "true" : "false");
+                starButton.addEventListener("click", function () {
+                    selectedRating = value;
+                    Array.from(ratingPicker.children).forEach(function (button, index) {
+                        button.classList.toggle("selected", index < selectedRating);
+                        button.setAttribute("aria-pressed", index + 1 === selectedRating ? "true" : "false");
+                    });
+                });
+                if (value <= selectedRating) starButton.classList.add("selected");
+                ratingPicker.appendChild(starButton);
+            })(n);
+        }
+
+        var commentLabel = document.createElement("label");
+        commentLabel.textContent = "متن دیدگاه";
+
+        var commentInput = document.createElement("textarea");
+        commentInput.rows = 4;
+        commentInput.maxLength = 400;
+        commentInput.placeholder = "نظرت درباره این نمونه‌کار...";
+        commentInput.required = true;
+
+        var submit = document.createElement("button");
+        submit.type = "submit";
+        submit.className = "button-primary";
+        submit.textContent = "ثبت دیدگاه نمایشی";
+
+        var formStatus = document.createElement("p");
+        formStatus.className = "form-status";
+        formStatus.setAttribute("role", "status");
+
+        form.append(formTitle, nameLabel, nameInput, ratingLabel, ratingPicker, commentLabel, commentInput, submit, formStatus);
+        section.append(list, form);
+        container.appendChild(section);
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            var author = nameInput.value.trim();
+            var comment = commentInput.value.trim();
+            if (!author || !comment) {
+                formStatus.textContent = "نام و متن دیدگاه را وارد کن.";
+                return;
+            }
+            reviews.unshift({ name: author, rating: selectedRating, text: comment });
+            renderReviews();
+            form.reset();
+            selectedRating = 5;
+            Array.from(ratingPicker.children).forEach(function (button, index) {
+                button.classList.toggle("selected", index < 5);
+                button.setAttribute("aria-pressed", index === 4 ? "true" : "false");
+            });
+            formStatus.textContent = "دیدگاه نمایشی اضافه شد؛ با بارگذاری مجدد صفحه پاک می‌شود.";
+        });
+
+        renderReviews();
+    }
+
     function setupPortfolioDetail() {
         var container = byId("portfolioDetail");
 
@@ -321,7 +479,7 @@
 
         container.append(media, heading, type, desc);
 
-        if (item.key !== "nexora") {
+        setupReviewSection(container, item);\n\n        if (item.key !== "nexora") {
             var notice = document.createElement("p");
             notice.className = "notice";
             notice.textContent =
@@ -398,6 +556,7 @@
         var description = byId("orderDescription");
         var preview = byId("orderPreview");
         var status = byId("orderStatus");
+        var botUrl = window.SITE && window.SITE.telegramBot;
 
         function createMessage() {
             preview.value = [
@@ -406,7 +565,7 @@
                 "خدمت: " + service.value,
                 "نام: " + (name.value.trim() || "ثبت نشده"),
                 "توضیحات: " + description.value.trim()
-            ].join("\n");
+            ].join("\\n");
             return preview.value;
         }
 
@@ -418,9 +577,32 @@
         form.addEventListener("submit", function (event) {
             event.preventDefault();
             if (!form.reportValidity()) return;
-            createMessage();
-            status.textContent = "متن سفارش آماده است؛ برای ثبت نهایی از کانال تلگرام NEXORA استفاده کن.";
+
+            var message = createMessage();
+            if (!isConfigured(botUrl) || !/^https:\\/\\/t\\.me\\//i.test(String(botUrl))) {
+                status.textContent = "لینک بات تلگرام تنظیم نشده است. لطفاً بعداً دوباره تلاش کن.";
+                return;
+            }
+
+            // Open the bot directly from the user's click to avoid popup blockers.
+            window.open(String(botUrl), "_blank", "noopener,noreferrer");
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(message).then(function () {
+                    status.textContent = "بات NEXORA باز شد و متن سفارش کپی شد؛ داخل گفت‌وگو Paste کن و دکمه ارسال را بزن.";
+                }).catch(function () {
+                    preview.focus();
+                    preview.select();
+                    status.textContent = "بات NEXORA باز شد. متن داخل کادر را کپی کن، در بات Paste کن و ارسال را بزن.";
+                });
+            } else {
+                preview.focus();
+                preview.select();
+                status.textContent = "بات NEXORA باز شد. متن داخل کادر را کپی کن، در بات Paste کن و ارسال را بزن.";
+            }
         });
+
+        createMessage();
     }
 
     function setupScrollControls() {
