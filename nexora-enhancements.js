@@ -372,25 +372,6 @@
     function setupContactLinks() {
         var site = window.SITE || {};
 
-        document.querySelectorAll("[data-ig]").forEach(function (link) {
-            if (isConfigured(site.instagram)) {
-                var username = String(site.instagram)
-                    .replace(/^@/, "")
-                    .replace(/^https?:\/\/(www\.)?instagram\.com\//, "")
-                    .replace(/\/$/, "");
-
-                link.href = "https://www.instagram.com/" + username + "/";
-                link.classList.remove("is-disabled");
-            } else {
-                link.href = "#";
-                link.classList.add("is-disabled");
-
-                link.addEventListener("click", function (event) {
-                    event.preventDefault();
-                });
-            }
-        });
-
         document.querySelectorAll("[data-link]").forEach(function (link) {
             var value = site[link.getAttribute("data-link")];
 
@@ -399,22 +380,6 @@
                 link.classList.remove("is-disabled");
             } else {
                 link.href = "#";
-                link.classList.add("is-disabled");
-
-                link.addEventListener("click", function (event) {
-                    event.preventDefault();
-                });
-            }
-        });
-
-        document.querySelectorAll("[data-mail]").forEach(function (link) {
-            if (isConfigured(site.email)) {
-                link.href = "mailto:" + String(site.email).trim();
-                link.textContent = String(site.email).trim();
-                link.classList.remove("is-disabled");
-            } else {
-                link.href = "#";
-                link.textContent = "ایمیل تنظیم نشده";
                 link.classList.add("is-disabled");
 
                 link.addEventListener("click", function (event) {
@@ -485,17 +450,7 @@
                 }
             }
 
-            if (isConfigured(site.email)) {
-                var subject = encodeURIComponent(
-                    "سفارش NEXORA - " + service.value
-                );
-
-                window.location.href =
-                    "mailto:" + String(site.email).trim() +
-                    "?subject=" + subject +
-                    "&body=" + encodeURIComponent(message);
-
-                status.textContent =
+            status.textContent =
                     "برنامه ایمیل برای ارسال سفارش باز می‌شود.";
                 return;
             }
