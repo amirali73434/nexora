@@ -473,28 +473,39 @@
 
 
     function setupScrollReveal() {
-        if (!("IntersectionObserver" in window)) return;
-        var observer = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add("nx-visible");
-                    observer.unobserve(entry.target);
+        var activePage = document.querySelector(".page.active-page");
+        if (!activePage) return;
+        var selector = ".hero-copy h1,.hero-copy h2,.hero-copy .hero-description,.hero-copy .hero-actions,.feature-copy,.feature-visual,.video-section,.section-heading,.service-card,.p-card,.tutorial-card,.page-heading,.about-panel,.order-panel,.price-panel,.contact-card,.simple-cta,.notice";
+        var items = Array.prototype.slice.call(activePage.querySelectorAll(selector));
+        items.forEach(function(el,i){
+            el.classList.add("nx-scroll-item");
+            el.style.setProperty("--nx-delay",(i%4)*90+"ms");
+        });
+        function check(){
+            var vh=window.innerHeight || document.documentElement.clientHeight;
+            items.forEach(function(el){
+                if(el.classList.contains("nx-scroll-shown")) return;
+                if(el.getBoundingClientRect().top < vh-45){
+                    el.classList.add("nx-scroll-shown");
                 }
             });
-        }, {threshold: 0.08, rootMargin: "0px 0px -35px 0px"});
-        function watchActive() {
-            var active = document.querySelector(".page.active-page");
-            if (!active) return;
-            active.querySelectorAll(".page-heading,.section-heading,.feature-copy,.feature-visual,.video-section,.service-card,.p-card,.tutorial-card,.about-panel,.order-panel,.price-panel,.contact-card,.simple-cta,.notice").forEach(function(el,i){
-                el.classList.remove("nx-visible");
-                el.classList.add("nx-reveal");
-                el.style.transitionDelay=(i%4)*90+"ms";
-                observer.observe(el);
-            });
         }
-        watchActive();
+        check();
+        window.addEventListener("scroll",check,{passive:true});
+        window.addEventListener("resize",check,{passive:true});
         document.querySelectorAll("[data-page]").forEach(function(link){
-            link.addEventListener("click",function(){setTimeout(watchActive,120);});
+            link.addEventListener("click",function(){
+                setTimeout(function(){
+                    activePage=document.querySelector(".page.active-page");
+                    items=Array.prototype.slice.call(activePage.querySelectorAll(selector));
+                    items.forEach(function(el,i){
+                        el.classList.remove("nx-scroll-shown");
+                        el.classList.add("nx-scroll-item");
+                        el.style.setProperty("--nx-delay",(i%4)*90+"ms");
+                    });
+                    check();
+                },180);
+            });
         });
     }
 
