@@ -471,6 +471,42 @@
         update();
     }
 
+
+    function setupScrollReveal() {
+        var selector = [
+            ".section-heading", ".feature-copy", ".feature-visual",
+            ".video-section > *", ".service-card", ".page-heading > *",
+            ".p-card", ".tutorial-card", ".about-panel > *",
+            ".order-panel", ".price-panel", ".contact-card",
+            ".simple-cta", ".notice", ".text-link", ".hero-copy > *"
+        ].join(",");
+
+        var items = Array.from(document.querySelectorAll(selector));
+        items.forEach(function (item, index) {
+            if (item.classList.contains("nx-reveal")) return;
+            item.classList.add("nx-reveal");
+            if (item.matches(".service-card, .contact-card, .p-card")) {
+                item.classList.add("nx-reveal-delay-" + ((index % 3) + 1));
+            }
+        });
+
+        if (!("IntersectionObserver" in window)) {
+            items.forEach(function (item) { item.classList.add("nx-visible"); });
+            return;
+        }
+
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("nx-visible");
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: "0px 0px -45px 0px" });
+
+        items.forEach(function (item) { observer.observe(item); });
+    }
+
     function init() {
         renderPortfolio();
         setupNavigation();
@@ -479,6 +515,7 @@
         setupContactLinks();
         setupOrderForm();
         setupScrollControls();
+        setupScrollReveal();
 
         console.info("[NEXORA] سایت آماده است.");
     }
